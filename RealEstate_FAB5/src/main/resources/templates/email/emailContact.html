@@ -41,7 +41,7 @@
         <main class="email-body">
             <h2>Xin chào <span th:utext="${fullNameTo}"></span>,</h2>
             <p>
-                Tôi là <span th:utext="${fullNameFrom}"></span>. Tôi viết email này để yêu cầu liên hệ với quý ông về loại tài sản bất động sản mà ông đăng trên bài viết Real Estate.
+                Tôi là <span th:utext="${fullNameFrom}"></span>. Tôi viết email này để yêu cầu liên hệ với quý <span th:utext="${gender ? 'ông': 'bà'}"></span> về loại tài sản bất động sản mà <span th:utext="${gender ? 'ông': 'bà'}"></span> đăng trên bài viết Real Estate.
             </p>
             <p th:utext="${content}">
             </p>

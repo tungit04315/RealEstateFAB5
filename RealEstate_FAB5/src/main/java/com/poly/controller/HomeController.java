@@ -198,13 +198,14 @@ public class HomeController {
 		String fullNameFrom = paramService.getString("fullNameFrom", "");
 		String subject = paramService.getString("subject", "");
 		String content = paramService.getString("content", "");
-		
+		Post p = ss.getAttribute("post_id");
+		Users u = userService.findById(p.getUsers_id().getUsername());
 		try {
-			mailService.sendEmailContact(to, subject, content, fullNameTo, fullNameFrom, phone);
+			mailService.sendEmailContact(to, subject, content, fullNameTo, fullNameFrom, phone, u.isGender());
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-		Post p = ss.getAttribute("post_id");
+		
 		return "redirect:/home/detail?id=" + p.getPost_id();
 	}
 	
@@ -216,9 +217,12 @@ public class HomeController {
 		
 //		String phoneVN = "+84" + phone.substring(1);
 		String phoneVN = "+84838565542";
-		String body = "Xin chào anh, tôi là " + fullName + ", " + content;
-		smsService.sendSms(phoneVN, body);
 		Post p = ss.getAttribute("post_id");
+		Users u = userService.findById(p.getUsers_id().getUsername());
+		String gender = u.isGender() ? "Quý ông":"Quý bà";
+		String body = "Xin chào " + gender +", tôi là " + fullName + ", " + content;
+		smsService.sendSms(phoneVN, body);
+		
 		return "redirect:/home/detail?id=" + p.getPost_id();
 	}
 	// TEST COMMIT

@@ -117,6 +117,7 @@ public class MailerService{
 		context.setVariable("email", mail.getTo());
 		context.setVariable("phone", mail.getPhone());
 		context.setVariable("content", mail.getBody());
+		context.setVariable("gender", mail.getGender());
         
         String html = templateEngine.process("email/emailContact", context);
 
@@ -313,8 +314,8 @@ public class MailerService{
 		this.sendBlockPost(new MailInfo(to, subject, body));
 	}
 	
-	public void sendEmailContact(String to, String subject, String body, String fullNameTo, String fullNameFrom, String phone) throws MessagingException {
-		this.sendContact(new MailContact(to , subject, body, fullNameTo, fullNameFrom, phone));
+	public void sendEmailContact(String to, String subject, String body, String fullNameTo, String fullNameFrom, String phone, boolean gender) throws MessagingException {
+		this.sendContact(new MailContact(to , subject, body, fullNameTo, fullNameFrom, phone, gender));
 	}
 	
 	public void sendEmailContactRealEstate(String to, String subject, String body, String fullNameTo) throws MessagingException {

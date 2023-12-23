@@ -317,6 +317,7 @@
                                 <h1 style="color: #025464">Gửi Email!</h1>
                                 <small>Tin nhắn của bạn sẽ được gửi đi trong vài phút!</small>
                                 <form action="/home/contact-email" method="post">
+                                	<input type="text" name="id" th:value="*{post_id}" hidden>
                                     <input type="text" name="to" th:value="*{users_id.email}" hidden>
                                     <input type="text" name="fullNameTo" th:value="*{users_id.fullname}" hidden>
                                     <input placeholder="Họ và tên" name="fullNameFrom" type="text" required />

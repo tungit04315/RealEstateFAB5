@@ -18,8 +18,9 @@ public class MailContact {
 	String fullNameTo;
 	String fullNameFrom;
 	String phone;
+	Boolean gender;
 
-	public MailContact(String to, String subject, String body, String fullNameTo, String fullNameFrom, String phone) {
+	public MailContact(String to, String subject, String body, String fullNameTo, String fullNameFrom, String phone, Boolean gender) {
 		this.from = "Real Estate <fab5@gmail.com.vn>";
 		this.to = to;
 		this.subject = subject;
@@ -27,5 +28,6 @@ public class MailContact {
 		this.fullNameTo = fullNameTo;
 		this.fullNameFrom = fullNameFrom;
 		this.phone = phone;
+		this.gender = gender;
 	}
 }
