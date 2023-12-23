@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{index_admin::areas(~{::.container-fluid})}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid">
+            <!--  Row 1 -->
+            <div class="col-lg-12 mb-3">
+                <h5 class="mb-3">Lịch Sử Bài Viết Đã Xóa</h5>
+                <table class="table tbl-edit">
+                    <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Tiêu đề</th>
+                            <th scope="col">Người đăng</th>
+                            <th scope="col">Gói bài viết</th>
+                            <th scope="col">Thời gian</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p,state : ${managerPost}">
+                            <th th:text="${state.index + 1}"></th>
+                            <td th:utext="${p.post_title.length > 28 ? #strings.substring(p.post_title, 0, 28) + '...' : p.post_title}"></td>
+                            <td th:utext="${p.users_id.username}"></td>
+                            <td th:utext="${p.services_id.services_name}"></td>
+                            <td th:utext="${#dates.format(p.create_at, 'dd-MM-yyyy')}"></td>
+                            <td class="d-flex">
+                                <a type="button" th:href="@{/admin/post-find-by-delete(id=${p.post_id})}" class="btn btn-primary">
+                                    <i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i> Chi tiết
+                                </a>
+                                <span style="font-size: 25px; color: black; margin: 0 5px;" th:attr="hidden=${p.users_id.active ? null : 'hidden'}">|</span>
+                                <a type="button" class="btn btn-primary" style="width: 150px;" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal-' + ${state.index}">
+                                    <i class="fa-solid fa-notes-medical"></i> Phục hồi
+                                </a>
+                            </td>
+                            <div class="modal fade" th:id="'exampleModal-'+ ${state.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="/admin/post-find-update" method="post" id="postRecovery">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Lý do phục hồi bài đăng</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" name="id" th:value="${p.post_id}" hidden>
+                                                <input type="text" class="form-control" th:value="${state.index + 1}" readonly>
+                                                <br>
+                                                <textarea name="notes" id="notes" class="form-control" placeholder="Lý do chặn bài..."></textarea>
+                                                <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                                                <button type="submit" class="btn btn-primary">Đồng ý</button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-center">
+                    <div style="display: flex;">
+                        <label for="pageSelector" style="margin-right: 10px;">Chọn trang:</label>
+                        <select id="pageSelector" class="form-select" aria-label="Page Selector" onchange="changePage(this.value)" style="width: 50%;">
+							<option th:each="pageNumber : ${#numbers.sequence(1, managerPost.getTotalPages())}"
+									th:value="${pageNumber}" th:text="${pageNumber}" th:selected="${pageNumber == managerPost.getNumber() + 1}">
+							</option>
+						</select>
+                    </div>
+                    <script th:inline="javascript">
+                        function changePage(page) {
+                            window.location.href = '/admin/history-delete-post?page=' + page;
+                        }
+                    </script>
+                </div>
+                <div class="col-lg-12 mb-3 mt-3" th:if="${post.post_id != 0}">
+                    <form action="#" id="postForm" class="form-edit-user-list" method="post" th:object="${post}">
+                        <div class="mb-3 mt-2 mr-2 d-flex justify-content-end">
+                            <div class="input-wrapper">
+                                <button class="icon" type="button">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                                <input placeholder="Nhập tên đăng nhập..." class="input" name="text" type="text">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h5>Thông tin bài viết</h5>
+                            <hr>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Mã tin</label>
+                                    <input type="text" required="" th:value="${post.post_id}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Tiêu đề</label>
+                                    <input required="" type="text" th:value="${post.post_title}" name="post_title" id="post_title">
+                                    <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Số điện thoại</label>
+                                    <input required="" type="text" th:value="${post.users_id.phone}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Email</label>
+                                    <input required="" type="text" th:value="${post.users_id.email}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Loại tin</label>
+                                    <input required="" type="text" th:value="${post.types_id.types_name}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Địa chỉ</label>
+                                    <input required="" type="text" th:value="${post.addresss}" name="address" id="address">
+                                    <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-lg-12">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Mô tả</label>
+                                    <textarea name="post_content" th:utext="${post.post_content}" id="post_content" cols="" rows="" required=""></textarea>
+                                    <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-lg-6 row">
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Diện tích</label>
+                                        <input required="" type="text" th:value="${post.acreage}" name="acreage" id="acreage">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Hướng nhà</label>
+                                        <input required="" type="text" th:value="${post.direction}" name="direction" id="direction">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 row">
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Phòng ngủ</label>
+                                        <input required="" type="text" th:value="${post.bed}" name="bed" id="bed">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Pháp lý</label>
+                                        <input required="" type="text" th:value="${post.juridical}" name="juridical" id="juridical">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-lg-6 row">
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Giá</label>
+                                        <input required="" type="text" th:value="${post.price}" name="price" id="price">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Hướng ban công</label>
+                                        <input required="" type="text" th:value="${post.balcony}" name="balcony" id="balcony">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 row">
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Toilet</label>
+                                        <input required="" type="text" th:value="${post.toilet}" name="toilet" id="toilet">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-control-post">
+                                        <label for="exampleInputEmail1" class="form-label">Nội thất</label>
+                                        <input required="" type="text" th:value="${post.interior}" name="interior" id="interior">
+                                        <span class="form-message item3" style="color: #ff0000; margin-top: 5px;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-lg-12">
+                                <label for="" class="form-label-2">Hình ảnh</label>
+                                <div class="row">
+                                    <div class="col" th:each="album : ${albums}">
+                                        <img th:src="@{'/files/img/' + ${album.albums_name}}" class="img-fluid" th:alt="${album.albums_name}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Ngày đăng</label>
+                                    <input required="" type="text" th:value="${post.create_at}" name="create_at" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-control-post">
+                                    <label for="exampleInputEmail1" class="form-label">Ngày hết hạn</label>
+                                    <input required="" type="text" th:value="${post.end_date}" name="end_date" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script src="/js/validator.js"></script>
+            <script type="text/javascript">
+                Validator({
+                    form: '#postRecovery',
+                    errorSelector: '.form-message',
+                    rules: [
+                        Validator.isRequired('#notes', 'Vui lòng nhập lý do'),
+                    ]
+                });
+            </script>
+        </div>
+    </main>
+</body>
+
+</html>
