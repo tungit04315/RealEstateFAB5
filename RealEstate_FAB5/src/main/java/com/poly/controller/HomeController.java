@@ -205,7 +205,7 @@ public class HomeController {
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-		
+		//
 		return "redirect:/home/detail?id=" + p.getPost_id();
 	}
 	
